@@ -1,11 +1,5 @@
-import Header from "../components/Header";
-
 function CreateTask() {
-  return (
-    <div>
-      <Header />
-    </div>
-  );
+  return <div></div>;
 }
 
 export default CreateTask;
