@@ -1,54 +1,29 @@
-# React + TypeScript + Vite
+# TaskHub Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the project help user to create and manage the tasks where user can login via openid connect service provider and manage their tasks
+this project created using the React, nodejs, serverless technology i,e aws lambda, aws sam, aws dynamodb, amazon cognito
 
-Currently, two official plugins are available:
+## project installation and setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. clone the repository
+2. install the dependency
+3. add the .env variables
+4. run the server with npm run dev command
 
-## Expanding the ESLint configuration
+## Project Hosting and deployment steps
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. clone the repository
+2. install the dependencies
+3. edit .env according to the environment eg. cognito clientId
+4. execute npm run build for creating the build file
+5. copy this build content to s3 bucket via s3 cp dist/ s3://taskhub-static-site --recursive --profile profile_name command
+6. go to amplify console and deploy this app via s3 option
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## authentication
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## important links
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. consuming graphql api :</br>
+   https://medium.com/@layne_celeste/fetching-data-in-react-from-a-graphql-api-9282e7835485</br>
+   https://www.freecodecamp.org/news/5-ways-to-fetch-data-react-graphql/
+2. Authntication with aws cognito service:</br>

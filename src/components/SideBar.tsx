@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router";
+import { useAuth } from "react-oidc-context";
 
 const SideBarContainer: any = styled.div`
   position: fixed;
@@ -17,14 +18,19 @@ const SideBarContainer: any = styled.div`
   }
 `;
 const SideBar: React.FC = () => {
+  const auth = useAuth();
   return (
     <SideBarContainer>
-      <nav className="nav-links">
-        <NavLink to="/createTask">Create Task</NavLink>
-      </nav>
-      <nav className="nav-links">
-        <NavLink to="/mytasks">My Tasks</NavLink>
-      </nav>
+      {auth.isAuthenticated && (
+        <nav className="nav-links">
+          <NavLink to="/createTask">Create Task</NavLink>
+        </nav>
+      )}
+      {auth.isAuthenticated && (
+        <nav className="nav-links">
+          <NavLink to="/mytasks">My Tasks</NavLink>
+        </nav>
+      )}
     </SideBarContainer>
   );
 };

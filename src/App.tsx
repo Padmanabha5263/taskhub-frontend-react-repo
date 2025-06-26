@@ -8,10 +8,11 @@ import SpinLoader from "./components/common/SpinLoader";
 
 const AppContainer = styled.div`
   .navigator {
-    position: relative;
+    position: fixed;
     top: 100px;
-    left: 350px;
+    left: 340px;
     padding: 20px;
+    width: calc(100% - 340px);
   }
 `;
 const App: React.FC = () => {

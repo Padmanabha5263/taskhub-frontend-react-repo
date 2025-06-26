@@ -7,8 +7,12 @@ const AvatarContainer = styled.div`
   border-radius: 50%;
   padding: 12px;
 `;
-function Avatar({ name: string }) {
-  return <AvatarContainer>Avatar</AvatarContainer>;
+
+interface AvatarProps {
+  name: string;
 }
+const Avatar: React.FC<AvatarProps> = ({ name }) => {
+  return <AvatarContainer>{name}</AvatarContainer>;
+};
 
 export default Avatar;
