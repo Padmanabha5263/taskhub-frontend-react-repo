@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { useAuth } from "react-oidc-context";
@@ -69,6 +69,87 @@ const EmptyState = styled.div`
   }
 `;
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+`;
+
+const ModalTitle = styled.h3`
+  color: #1f2937;
+  font-size: 1.25rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+`;
+
+const ModalMessage = styled.p`
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 25px;
+`;
+
+const ModalButtons = styled.div`
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+`;
+
+const DeleteButton = styled.button`
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: #dc2626;
+  }
+  
+  &:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+`;
+
+const CancelButton = styled.button`
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #374151;
+  }
+`;
+
 const GET_TASKS_BY_USER_ID = gql`
   query GetTasksByUserId($userid: ID!) {
     getTasksByUserId(userid: $userid) {
@@ -84,8 +165,8 @@ const GET_TASKS_BY_USER_ID = gql`
 `;
 
 const DELETE_TASK = gql`
-  mutation DeleteTask($taskid: ID!) {
-    deleteTask(taskid: $taskid) {
+  mutation DeleteTaskById($userid: ID!, $id: ID!) {
+    deleteTaskById(userid: $userid, id: $id) {
       statusCode
       message
     }
@@ -95,23 +176,43 @@ const DELETE_TASK = gql`
 const MyTasks: React.FC = () => {
   const auth = useAuth();
   const userid = auth.user?.profile?.sub;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<{id: string, name: string} | null>(null);
+  
   const { loading, error, data, refetch } = useQuery(GET_TASKS_BY_USER_ID, {
     variables: { userid },
   });
-  
+
   const [deleteTask, { loading: deleteLoading }] = useMutation(DELETE_TASK);
-  
-  const handleDeleteTask = async (taskid: string) => {
+
+  const handleDeleteClick = (taskid: string, taskname: string) => {
+    setTaskToDelete({ id: taskid, name: taskname });
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!taskToDelete) return;
+    
     try {
-      await deleteTask({ 
-        variables: { taskid },
+      await deleteTask({
+        variables: { 
+          id: taskToDelete.id, 
+          userid: userid 
+        },
         onCompleted: () => {
-          refetch(); // Refresh the task list after deletion
-        }
+          refetch();
+          setShowDeleteModal(false);
+          setTaskToDelete(null);
+        },
       });
     } catch (err) {
       console.error("Error deleting task:", err);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setTaskToDelete(null);
   };
 
   if (loading)
@@ -153,10 +254,29 @@ const MyTasks: React.FC = () => {
               taskid={task.id}
               description={task.description}
               taskname={task.taskname}
-              onDelete={handleDeleteTask}
+              onDelete={(taskid) => handleDeleteClick(taskid, task.taskname)}
             />
           ))}
         </TasksGrid>
+      )}
+      
+      {showDeleteModal && (
+        <ModalOverlay>
+          <ModalContent>
+            <ModalTitle>Delete Task</ModalTitle>
+            <ModalMessage>
+              Are you sure you want to delete "{taskToDelete?.name}"? This action cannot be undone.
+            </ModalMessage>
+            <ModalButtons>
+              <CancelButton onClick={handleCancelDelete}>
+                Cancel
+              </CancelButton>
+              <DeleteButton onClick={handleConfirmDelete} disabled={deleteLoading}>
+                {deleteLoading ? "Deleting..." : "Delete"}
+              </DeleteButton>
+            </ModalButtons>
+          </ModalContent>
+        </ModalOverlay>
       )}
     </MyTaskContainer>
   );
