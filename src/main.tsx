@@ -6,16 +6,24 @@ import { AuthProvider } from "react-oidc-context";
 import { cognitoAuthConfig } from "./configs/cognito.ts";
 import { BrowserRouter } from "react-router";
 import { ApolloProvider } from "@apollo/client";
-import { client } from "./helper/graphqlClient.ts";
+import { useAuthenticatedApolloClient } from "./helper/useAuthenticatedApolloClient.ts";
+
+const AppWithProviders = () => {
+  const client = useAuthenticatedApolloClient();
+  
+  return (
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ApolloProvider>
+  );
+};
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider {...cognitoAuthConfig}>
-      <ApolloProvider client={client}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </ApolloProvider>
+      <AppWithProviders />
     </AuthProvider>
   </StrictMode>
 );

@@ -6,7 +6,6 @@ import { useAuth } from "react-oidc-context";
 
 const NavigationRoutes: React.FC = () => {
   const auth = useAuth();
-  console.log("authenticated", auth.isAuthenticated);
   return (
     <Routes>
       {/* <Route path="/createTask" element={<CreateTask />} /> */}
