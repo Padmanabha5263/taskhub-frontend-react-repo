@@ -4,9 +4,9 @@ import { useMutation, gql } from "@apollo/client";
 import { useAuth } from "react-oidc-context";
 
 const CreateTaskContainer = styled.div`
-  padding: 20px;
   max-width: 600px;
   margin: 0 auto;
+  width: 100%;
 `;
 
 const PageTitle = styled.h1`

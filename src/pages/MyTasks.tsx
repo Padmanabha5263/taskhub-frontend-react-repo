@@ -5,9 +5,9 @@ import { useAuth } from "react-oidc-context";
 import Task from "../components/card/Task";
 
 const MyTaskContainer = styled.div`
-  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 `;
 
 const TasksGrid = styled.div`
