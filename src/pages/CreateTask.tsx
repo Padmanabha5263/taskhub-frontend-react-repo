@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useMutation, gql } from "@apollo/client";
+import { useMutation, gql, useApolloClient } from "@apollo/client";
 import { useAuth } from "react-oidc-context";
 
 const CreateTaskContainer = styled.div`
@@ -144,14 +144,26 @@ const CREATE_TASK = gql`
     }
   }
 `;
-
+const GET_TASKS_BY_USER_ID = gql`
+  query GetTasksByUserId($userid: ID!) {
+    getTasksByUserId(userid: $userid) {
+      statusCode
+      message
+      data {
+        id
+        taskname
+        description
+      }
+    }
+  }
+`;
 const CreateTask: React.FC = () => {
   const auth = useAuth();
   const [taskname, setTaskname] = useState("");
   const [description, setDescription] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
+  const client = useApolloClient();
   const [createTask, { loading }] = useMutation(CREATE_TASK);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -175,7 +187,12 @@ const CreateTask: React.FC = () => {
 
       if (result.data?.createTask?.statusCode === 200) {
         setSuccessMessage("Task created successfully!");
-        handleClear();
+        setTimeout(() => {
+          handleClear();
+        }, 1000);
+        client.refetchQueries({
+          include: [GET_TASKS_BY_USER_ID],
+        });
       } else {
         setErrorMessage(
           result.data?.createTask?.message || "Failed to create task"

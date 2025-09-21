@@ -3,8 +3,5 @@ export const cognitoAuthConfig: any = {
   client_id: `${import.meta.env.VITE_COGNITO_CLIENTID}`,
   redirect_uri: `${import.meta.env.VITE_COGNITO_REDIRECTURI}`,
   response_type: `${import.meta.env.VITE_COGNITO_RESPONSETYPE}`,
-  scope: "phone openid email",
-  loadUserInfo: true, // Automatically loads user profile data
-  automaticSilentRenew: true, // Automatically renews tokens before they expire
-  includeIdTokenInSilentRenew: true,
+  scope: "email openid profile",  
 };

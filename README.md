@@ -12,14 +12,15 @@ this project created using the React, nodejs, serverless technology i,e aws lamb
 
 ## Project Hosting and deployment steps
 
-1. clone the repository
-2. install the dependencies
-3. edit .env according to the environment eg. cognito clientId, cognito logout url from localhost to amplify domain url
-4. execute npm run build for creating the build file
-5. copy this build content to s3 bucket via s3 cp dist/ s3://taskhub-static-site --recursive --profile profile_name command
-6. go to amplify console and deploy this app via s3 option
+. clone the repository
+. install the dependencies
+. edit .env according to the environment eg. cognito clientId, cognito logout url from localhost to amplify domain url
+. execute npm run build for creating the build file
+. login to aws via aws cli  aws sso login --profile profile name
+. copy this build content to s3 bucket via aws s3 cp dist/ s3://taskhub-static-site --recursive --profile profile_name command
+. go to amplify console and deploy this app via s3 option
 
-## authentication
+
 
 ## important links
 

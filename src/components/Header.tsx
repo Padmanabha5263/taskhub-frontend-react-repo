@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import logo from "../assets/images/logo.png";
-import React, { useEffect } from "react";
+import React from "react";
 import { useAuth } from "react-oidc-context";
 import CustomButton from "./common/CustomButton";
 import { useNavigate } from "react-router";
@@ -122,47 +122,8 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (auth.isAuthenticated && auth.user) {
-      // If phone number is not verified, redirect to verification
-      if (!auth.user.profile.phone_number_verified) {
-        handleMobileVerification();
-      }
-    }
-  }, [auth.isAuthenticated, auth.user]);
 
-  const handleMobileVerification = () => {
-    // Redirect to Cognito hosted UI for phone verification
-    window.location.href = `${
-      import.meta.env.VITE_COGNITO_CUSTOMDOMAIN
-    }/oauth2/authorize?client_id=${
-      import.meta.env.VITE_COGNITO_CLIENTID
-    }&response_type=code&scope=openid+phone&redirect_uri=${encodeURIComponent(
-      import.meta.env.VITE_COGNITO_REDIRECTURI
-    )}&state=phone_verification`;
-  };
 
-  const resendMobileOTP = async () => {
-    try {
-      // Log user info for debugging
-      console.log("User phone:", auth.user?.profile.phone_number);
-      console.log("Phone verified:", auth.user?.profile.phone_number_verified);
-
-      // Force logout and re-login to trigger new OTP
-      await auth.removeUser();
-
-      // Redirect to sign in with phone verification
-      window.location.href = `${
-        import.meta.env.VITE_COGNITO_CUSTOMDOMAIN
-      }/oauth2/authorize?client_id=${
-        import.meta.env.VITE_COGNITO_CLIENTID
-      }&response_type=code&scope=openid+phone&redirect_uri=${encodeURIComponent(
-        import.meta.env.VITE_COGNITO_REDIRECTURI
-      )}&prompt=login`;
-    } catch (error) {
-      console.error("Error resending OTP:", error);
-    }
-  };
 
   const signOutRedirect = async (): Promise<void> => {
     try {
@@ -181,9 +142,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
 
   const signInRedirect = async (): Promise<void> => {
     try {
-      await auth.signinRedirect({
-        extraQueryParams: { redirect_uri: window.location.origin + "/" },
-      });
+      await auth.signinRedirect();
     } catch (error) {
       console.error("Sign out error:", error);
     }
@@ -210,14 +169,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
 
         {auth.isAuthenticated ? (
           <>
-            {!auth.user?.profile.phone_number_verified && (
-              <CustomButton
-                onClickFn={resendMobileOTP}
-                buttonName="Verify Mobile"
-                height="40px"
-                width="120px"
-              />
-            )}
             <CustomButton
               onClickFn={signOutRedirect}
               buttonName="Logout"

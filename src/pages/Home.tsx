@@ -4,7 +4,7 @@ import { useAuth } from "react-oidc-context";
 import { useNavigate } from "react-router";
 import CustomButton from "../components/common/CustomButton";
 
-const HomeContainer = styled.div<{ isAuthenticated: boolean }>`
+const HomeContainer = styled.div<{isAuthenticated: any}>`
   min-height: ${(props) =>
     props.isAuthenticated ? "calc(100vh - 80px - 48px)" : "100vh"};
   width: 100%;
